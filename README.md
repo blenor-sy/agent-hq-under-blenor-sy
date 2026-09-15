@@ -4,7 +4,7 @@ Agent HQ is a secure, cross-device control room for independent AI agent runtime
 
 ## Product status
 
-The repository contains the complete production architecture and UI. A Supabase project and a web deployment are still required before real agents can connect. Custom ChatGPT/Codex sessions are not permanent workers; see [Known limitations](docs/LIMITATIONS.md).
+The production dashboard is deployed at [agent-hq-under-blenor-sy.vercel.app](https://agent-hq-under-blenor-sy.vercel.app) on Vercel Hobby and uses a Supabase Free project. Server-side agent APIs require the owner to finish the protected `SUPABASE_SECRET_KEY` setup described in [Deployment](docs/DEPLOYMENT.md). Custom ChatGPT/Codex sessions are not permanent workers; see [Known limitations](docs/LIMITATIONS.md).
 
 ## Included
 
