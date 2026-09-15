@@ -52,9 +52,11 @@ A production-ready Agent HQ should eventually let the user:
 ## Phase 0 — Product design and architecture
 
 ### Goal
+
 Freeze the product rules before adding infrastructure.
 
 ### Deliverables
+
 - product plan;
 - acceptance criteria;
 - architecture document;
@@ -63,6 +65,7 @@ Freeze the product rules before adding infrastructure.
 - clear distinction between the dashboard, control plane, database, and agent runtimes.
 
 ### Exit gate
+
 No implementation phase starts until the architecture and security model are documented.
 
 ---
@@ -70,9 +73,11 @@ No implementation phase starts until the architecture and security model are doc
 ## Phase 1 — Local application quality
 
 ### Goal
+
 Make the existing starter application clean, testable, and reliable locally before any production deployment.
 
 ### Work
+
 - install dependencies and lock versions;
 - run TypeScript checks;
 - add linting/formatting;
@@ -85,6 +90,7 @@ Make the existing starter application clean, testable, and reliable locally befo
 - document local setup.
 
 ### Exit gate
+
 - clean install succeeds;
 - production build succeeds;
 - tests pass;
@@ -96,9 +102,11 @@ Make the existing starter application clean, testable, and reliable locally befo
 ## Phase 2 — Secure persistent backend
 
 ### Goal
+
 Turn Supabase into the real source of truth.
 
 ### Work
+
 - create/configure Supabase project;
 - apply schema through migrations;
 - add user authentication;
@@ -111,6 +119,7 @@ Turn Supabase into the real source of truth.
 - configure Realtime only for tables that require it.
 
 ### Exit gate
+
 - user can sign in;
 - anonymous users cannot read private agent data;
 - authenticated user can only read their workspace data;
@@ -122,9 +131,11 @@ Turn Supabase into the real source of truth.
 ## Phase 3 — Real agent telemetry
 
 ### Goal
+
 Connect real agents and prove that HQ reflects genuine runtime activity.
 
 ### Work
+
 - per-agent registration and credentials;
 - task_started, heartbeat, progress, log, completed, failed events;
 - idempotency for repeated events;
@@ -137,7 +148,9 @@ Connect real agents and prove that HQ reflects genuine runtime activity.
 - connect Spanish Assistant as second test agent.
 
 ### Exit gate
+
 Run a real task from each connected agent and verify that two separate devices see:
+
 - task start;
 - current step;
 - elapsed time;
@@ -150,9 +163,11 @@ Run a real task from each connected agent and verify that two separate devices s
 ## Phase 4 — Bidirectional control plane
 
 ### Goal
+
 Make HQ able to control agents, not just observe them.
 
 ### Work
+
 - durable command queue;
 - assign task from HQ;
 - agent lease/claim mechanism;
@@ -166,6 +181,7 @@ Make HQ able to control agents, not just observe them.
 - command audit trail.
 
 ### Exit gate
+
 A task created on the dashboard can be claimed by the correct agent, executed once, monitored live, and cancelled/retried safely.
 
 ---
@@ -173,9 +189,11 @@ A task created on the dashboard can be claimed by the correct agent, executed on
 ## Phase 5 — Deployment and multi-device access
 
 ### Goal
+
 Make HQ continuously reachable from the user’s devices.
 
 ### Work
+
 - deploy dashboard/API;
 - configure production environment variables;
 - secure production domain;
@@ -186,6 +204,7 @@ Make HQ continuously reachable from the user’s devices.
 - add basic application monitoring.
 
 ### Exit gate
+
 The user can open the same HQ from phone, iPad, and computer and see the same live state without running a local development server.
 
 ---
@@ -193,9 +212,11 @@ The user can open the same HQ from phone, iPad, and computer and see the same li
 ## Phase 6 — Always-on agent runtimes
 
 ### Goal
+
 Make supported agents capable of running independently from the dashboard and reporting continuously.
 
 ### Work
+
 - choose persistent runtime model for each type of agent;
 - worker registration;
 - heartbeat watchdog;
@@ -207,9 +228,11 @@ Make supported agents capable of running independently from the dashboard and re
 - runtime version reporting.
 
 ### Important limitation
+
 Agent HQ can stay online 24/7, but a chat or temporary Codex session does not automatically become a permanent worker. Each always-on agent needs an actual persistent runtime.
 
 ### Exit gate
+
 At least one agent runtime survives dashboard closure and continues processing/reporting work independently.
 
 ---
@@ -217,9 +240,11 @@ At least one agent runtime survives dashboard closure and continues processing/r
 ## Phase 7 — Product polish
 
 ### Goal
+
 Turn the technically working system into something pleasant and useful every day.
 
 ### Work
+
 - polished responsive UI;
 - agent detail views;
 - task filters/search;
@@ -233,6 +258,7 @@ Turn the technically working system into something pleasant and useful every day
 - onboarding for new agents.
 
 ### Exit gate
+
 The product is understandable without reading developer documentation and common workflows require only a few taps/clicks.
 
 ---
@@ -240,9 +266,11 @@ The product is understandable without reading developer documentation and common
 ## Phase 8 — Multi-agent orchestration
 
 ### Goal
+
 Allow agents to cooperate safely on larger projects.
 
 ### Work
+
 - dependencies between tasks;
 - agent-to-agent messages;
 - shared project workspaces;
@@ -253,6 +281,7 @@ Allow agents to cooperate safely on larger projects.
 - audit log.
 
 ### Exit gate
+
 A multi-agent workflow can be reproduced, audited, interrupted, and resumed without losing state.
 
 ---

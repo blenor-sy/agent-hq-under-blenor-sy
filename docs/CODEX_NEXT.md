@@ -1,46 +1,32 @@
 # Codex continuation brief
 
-You are continuing the Agent HQ project.
+## Current implementation
 
-## Preserve these principles
+Agent HQ 1.0 contains the authenticated dashboard, workspace RLS schema, v1 agent API, idempotent event ingest, durable leased queue, attempts, commands, schedules, notifications, artifacts, usage fields, SDK, and persistent webhook worker.
 
-1. Never fake agent progress.
-2. Agent state comes from signed/reported events.
-3. The dashboard must be cross-device and responsive.
-4. Agent processes may run independently of the dashboard.
-5. Missing heartbeat means stale/offline.
-6. Secrets stay server-side.
-7. Prefer durable task/event history over ephemeral UI state.
+Before changing behavior, read `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, and `docs/ACCEPTANCE_CRITERIA.md`.
 
-## Next implementation milestones
+## Mandatory checks
 
-### P0
-- Add Supabase Auth.
-- Add owner/workspace model.
-- Replace public dashboard RLS with owner-only policies.
-- Add dashboard task detail page.
-- Add logs with filtering.
-- Add per-agent page.
+```bash
+npm ci
+npm run check
+supabase db reset
+supabase test db
+```
 
-### P1
-- Add bidirectional command queue.
-- Assign tasks from HQ to agents.
-- Add cancel/retry/pause commands.
-- Add worker lease/ack mechanism.
-- Add task priority.
-- Add cron/schedules.
+Do not report database tests as passed unless a local or isolated remote Supabase database actually ran them.
 
-### P2
-- Runtime metrics: elapsed, queue time, token usage, cost.
-- Files/artifacts table.
-- Agent configuration/version history.
-- Notifications for failures/offline agents.
-- Search across logs and tasks.
-- Mobile PWA.
+## Preserve
 
-### P3
-- Multi-agent orchestration / dependencies.
-- Agent-to-agent messages.
-- Shared project workspaces.
-- Human approval gates.
-- Audit logs.
+- Never replace nullable progress with guessed values.
+- Never put `SUPABASE_SECRET_KEY`, `CRON_SECRET`, or agent tokens in client code.
+- User writes go through authenticated RPCs with membership checks.
+- Agent writes go through token-authenticated server routes and service-only RPCs.
+- Realtime is a refresh signal, not source of truth.
+- A retry creates another `task_attempts` row.
+- Pause controls appear only for an agent that declares the `pause` capability.
+
+## External activation still needed
+
+The repository alone cannot create credentials or make a temporary ChatGPT/Codex skill run continuously. Complete the steps in `docs/DEPLOYMENT.md` and `docs/AGENT_ADAPTERS.md` with the owner’s accounts.

@@ -1,119 +1,72 @@
 # Agent HQ
 
-A cross-device control room for all of your agents.
+Agent HQ is a secure, cross-device control room for independent AI agent runtimes. It stores real heartbeats, tasks, attempts, logs, artifacts, worker health, schedules, and commands in Supabase Postgres. It never invents activity or progress.
 
-## What it tracks
+## Product status
 
-- Agent online/offline state
-- Current task
-- Current step
-- Progress %
-- Started time
-- Live elapsed time
-- Heartbeats / last seen
-- Logs and events
-- Completed and failed tasks
-- Task history
-- Error messages
-- Agent metadata and capabilities
+The repository contains the complete production architecture and UI. A Supabase project and a web deployment are still required before real agents can connect. Custom ChatGPT/Codex sessions are not permanent workers; see [Known limitations](docs/LIMITATIONS.md).
 
-## Architecture
+## Included
 
-- **Dashboard:** Next.js
-- **Database/Auth/Realtime:** Supabase
-- **Agent reporting:** HTTP ingest API
-- **Cross-device:** deploy the Next.js app to a web host
-- **Always-on:** agents/workers can run anywhere and send heartbeats to HQ
+- Supabase email/password and passwordless authentication with SSR cookies
+- Workspace ownership and database-enforced Row Level Security
+- Per-agent, one-time, hashed, revocable credentials
+- Versioned `/api/v1` integration contract and retrying TypeScript SDK
+- Idempotent telemetry and delayed-event protection
+- Truthful live/stale/offline health derived from heartbeats
+- Durable priority queue with atomic claims, leases, acknowledgements, attempts, cancellation, and retries
+- Recurring interval schedules processed independently of the open dashboard
+- Persistent webhook worker adapter with crash recovery and cancellation acknowledgement
+- Responsive dashboard for phone, tablet, and desktop
+- Agent/task detail pages, timelines, log filters, artifacts, notifications, usage metrics, and audit history
+- Database-backed per-credential rate limiting
+- CI, unit tests, database integration tests, health endpoint, and operational documentation
 
-Agent HQ does not guess what an agent is doing. Agents explicitly report state and progress.
+## Requirements
 
-## Local start
+- Node.js 22 or newer
+- npm 11 or newer
+- A dedicated Supabase project
+- Supabase CLI for local database testing and migration deployment
 
-1. Install Node.js 22+.
-2. Run `npm install`.
-3. Copy `.env.example` to `.env.local`.
-4. Create a Supabase project.
-5. Run `supabase/migrations/0001_agent_hq.sql` in the Supabase SQL editor.
-6. Add your Supabase URL / publishable key / secret key.
-7. Run `npm run dev`.
+## Local setup
 
-Open http://localhost:3000.
-
-## Agent API
-
-Register/update an agent with the admin endpoint:
-
-`POST /api/agents/register`
-
-Header:
-
-`Authorization: Bearer <AGENT_ADMIN_SECRET>`
-
-Body:
-
-```json
-{
-  "slug": "spanish-assistant",
-  "name": "Spanish Assistant",
-  "description": "Spanish school assistant",
-  "capabilities": ["homework", "translation", "grammar"]
-}
+```bash
+npm ci
+cp .env.example .env.local
+supabase start
+supabase db reset
+npm run dev
 ```
 
-The response returns an agent token. Store that token securely in the agent's runtime.
+Copy the local Supabase URL, publishable key, and secret/service key into `.env.local`. Generate `CRON_SECRET` with at least 32 random bytes. Never prefix a secret with `NEXT_PUBLIC_`.
 
-Then send agent events:
+Open [http://localhost:3000](http://localhost:3000), create an account, and register an agent from **Agents → Connect agent**. The database trigger creates a private personal workspace for every new authenticated user.
 
-`POST /api/agents/event`
+## Quality gate
 
-Header:
-
-`Authorization: Bearer <agent token>`
-
-Examples:
-
-```json
-{
-  "type": "task_started",
-  "taskExternalId": "homework-123",
-  "title": "Spanish homework",
-  "message": "Starting exercise 4",
-  "progress": 0
-}
+```bash
+npm run check
+supabase test db
 ```
 
-```json
-{
-  "type": "heartbeat",
-  "taskExternalId": "homework-123",
-  "message": "Writing answer 2",
-  "progress": 45
-}
-```
+`npm run check` runs formatting, ESLint, TypeScript, unit tests, and the production build. Database tests require a running local Supabase stack.
 
-```json
-{
-  "type": "task_completed",
-  "taskExternalId": "homework-123",
-  "message": "Finished",
-  "progress": 100
-}
-```
+## Deploy
 
-## Nonstop operation
+Migration `0008` configures the minute-by-minute health, lease, and schedule sweep inside Supabase Postgres, so it does not depend on a paid hosting cron or an open browser. Follow [Deployment](docs/DEPLOYMENT.md) to configure Supabase Auth callbacks, protected environment variables, and HTTPS.
 
-The dashboard can stay online 24/7 once deployed, but each agent also needs a runtime that stays online (Codex environment, cloud worker, server, computer, etc.). The agent sends heartbeats every 15–60 seconds while working.
+## Connect an agent
 
-A missing heartbeat is what marks an agent as stale/offline.
+Use the reusable [TypeScript SDK](sdk/agent-hq-client.ts) or the HTTP API documented in [Agent integration](docs/AGENT_INTEGRATION.md). The School Assistant and Spanish Assistant adapter plan is in [Agent adapters](docs/AGENT_ADAPTERS.md).
 
-## Recommended next steps
+## Documentation
 
-- Add Supabase Auth so only you can view the HQ.
-- Deploy dashboard.
-- Connect `$school-assistant`.
-- Connect `$spanish-assistant`.
-- Add notification rules.
-- Add task assignment from HQ back to agents.
-- Add agent queue / worker transport.
-- Add file/artifact links.
-- Add cost/token/runtime metrics.
+- [Architecture](docs/ARCHITECTURE.md)
+- [Security](docs/SECURITY.md)
+- [Agent integration](docs/AGENT_INTEGRATION.md)
+- [Deployment](docs/DEPLOYMENT.md)
+- [Operations and backups](docs/OPERATIONS.md)
+- [Testing](docs/TESTING.md)
+- [Completion report](docs/COMPLETION_REPORT.md)
+- [Known limitations](docs/LIMITATIONS.md)

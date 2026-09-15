@@ -18,7 +18,7 @@ Build a reliable, cross-device control room for all of the user's agents.
 
 ## Current stack
 
-- Next.js 16.3.4
+- Next.js 16.3.5
 - React 19.3.0
 - TypeScript
 - Supabase JS 2.116.0
@@ -29,12 +29,23 @@ Build a reliable, cross-device control room for all of the user's agents.
 1. Read `README.md`.
 2. Read `docs/ARCHITECTURE.md`.
 3. Read `docs/CODEX_NEXT.md`.
-4. Inspect `supabase/migrations/0001_agent_hq.sql`.
-5. Run the app and preserve existing API contracts unless intentionally versioning them.
+4. Inspect every ordered file in `supabase/migrations/` and the database tests.
+5. Run `npm run check`; run `supabase db reset && supabase test db` when a local stack is available.
+6. Preserve `/api/v1` unless intentionally introducing and documenting a new version.
+
+## Write boundaries
+
+- Browser reads are RLS-scoped to workspace membership.
+- Browser commands use authenticated RPCs that verify `auth.uid()`.
+- Agent commands use a per-agent bearer token and service-only RPCs.
+- Never grant browser roles access to `agent_tokens` or `api_rate_limits`.
+- Never mutate a leased task without matching agent, worker, task, lease ID, and expiry.
+- Show pause controls only when the agent declares the `pause` capability.
 
 ## Definition of done for new monitoring features
 
 A monitoring feature is only complete if:
+
 - data is persisted,
 - dashboard rendering is based on actual data,
 - failure/offline cases are handled,
