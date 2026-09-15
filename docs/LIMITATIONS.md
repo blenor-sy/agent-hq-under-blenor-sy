@@ -1,6 +1,6 @@
 # Known limitations
 
-- The Supabase Free project and database schema exist, but no production dashboard URL/domain or worker deployment exists yet. Those require the owner’s hosting/runtime authorization.
+- The production dashboard is live on Vercel Hobby, but the server-only `SUPABASE_SECRET_KEY`, Supabase Auth production callback, owner account, and persistent worker still require owner-side activation. Until the secret is configured and Vercel is redeployed, privileged agent API routes are unavailable.
 - The pgTAP file was not run through a local Supabase stack because Docker/Supabase CLI is unavailable here. Equivalent authorization, idempotency, ordering, and lease assertions passed against the remote database inside a rolled-back transaction.
 - School Assistant and Spanish Assistant are prepared integration identities/adapters, not connected runtimes until persistent handlers are deployed with their tokens.
 - A custom ChatGPT/Codex conversation is not an always-on process. Closing it stops that runtime unless work was handed to a separate worker service.
