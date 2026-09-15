@@ -51,22 +51,25 @@ The Supabase secret key is intentionally not present in source control or browse
 - Supabase performance advisor: only expected unused-index information for the newly created empty database
 - Active database Cron record: verified
 
-The local interactive server could not be manually browsed in this managed environment because Node failed while enumerating network interfaces (`uv_interface_addresses`). The production compile and route generation passed. Cross-device and hosted browser workflows have therefore not been claimed as tested.
+The hosted production login page was opened successfully and a logged-out request to the root URL was verified to redirect to `/login`. Vercel reported both production deployments as `Ready`. The managed browser and its network proxy blocked direct navigation/fetches to the raw JSON `/api/health` endpoint, so that endpoint is not claimed as externally verified. Physical iPhone/iPad testing and a same-account multi-device workflow have not yet been performed.
 
 ## Connected agents and deployment
 
 - Connected agents: none
 - Persistent workers online: none
-- Production dashboard URL: not deployed
+- Production dashboard URL: `https://agent-hq-under-blenor-sy.vercel.app`
+- Hosting: Vercel Hobby, confirmed free (`$0`) with no Pro trial selected
+- Source deployment: GitHub `main` at `6ef2e530f23ee527f96d3f01d80c85d5a674beb3`
+- Live environment: the Supabase URL, browser-safe publishable key, and production site URL are configured; the server-only Supabase secret key is not configured
 
 School Assistant and Spanish Assistant have reusable adapter contracts and examples but are not described as connected or always-on. ChatGPT/Codex conversations cannot supply continuous runtime telemetry after their session ends; each needs a persistent compatible handler/worker to do so honestly.
 
 ## Owner actions still required
 
-1. Authorize/import the GitHub repository into a free Vercel Hobby project (personal, non-commercial use), or provide access to another free Node.js 22 host.
-2. In the host, configure the browser-safe Supabase URL/publishable key, the server-only Supabase secret key, a site URL, and optionally a fallback `CRON_SECRET`. Never prefix server secrets with `NEXT_PUBLIC_`.
-3. Add the deployed `/auth/callback` URL in Supabase Auth and choose/configure the desired email delivery method.
-4. Create the owner account and complete the documented same-account mobile/tablet/desktop acceptance flow.
+1. In Vercel, add the existing Supabase project's server-only secret key as `SUPABASE_SECRET_KEY` for Production and Preview, then redeploy. The connected Supabase tool intentionally cannot reveal this secret, and it must never be pasted into chat or committed.
+2. In Supabase Auth URL Configuration, set the Site URL to `https://agent-hq-under-blenor-sy.vercel.app` and add `https://agent-hq-under-blenor-sy.vercel.app/auth/callback` to redirect URLs. Choose/configure the desired email delivery method.
+3. Enable Vercel two-factor authentication. It was explicitly skipped during deployment and remains a security follow-up.
+4. Create the owner account and complete the documented same-account mobile/tablet/desktop acceptance flow. Re-check `/api/health` from a normal browser or HTTP client.
 5. Deploy at least one `worker/Dockerfile` instance on a compatible always-on runtime, create an agent token in HQ, and store that token only in the runtime secret store.
 6. Configure backups appropriate to the importance of the data. The Free plan does not provide the paid plan’s backup/support guarantees.
 
