@@ -29,4 +29,4 @@ Do not report database tests as passed unless a local or isolated remote Supabas
 
 ## External activation still needed
 
-The repository alone cannot create credentials or make a temporary ChatGPT/Codex skill run continuously. Complete the steps in `docs/DEPLOYMENT.md` and `docs/AGENT_ADAPTERS.md` with the owner’s accounts.
+The production Vercel Hobby deployment is live at `https://agent-hq-under-blenor-sy.vercel.app`. The owner must still add `SUPABASE_SECRET_KEY` directly to Vercel without exposing it in chat, configure the production Site URL and `/auth/callback` redirect in Supabase Auth, enable Vercel 2FA, create the owner account, and deploy a compatible persistent worker. A temporary ChatGPT/Codex skill cannot honestly be described as always-on.
