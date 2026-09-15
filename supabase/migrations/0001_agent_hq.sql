@@ -56,13 +56,9 @@ alter table public.agent_tokens enable row level security;
 alter table public.tasks enable row level security;
 alter table public.agent_events enable row level security;
 
-grant select on public.agents, public.tasks, public.agent_events to anon, authenticated;
-
-create policy "MVP dashboard can read agents" on public.agents for select to anon, authenticated using (true);
-create policy "MVP dashboard can read tasks" on public.tasks for select to anon, authenticated using (true);
-create policy "MVP dashboard can read events" on public.agent_events for select to anon, authenticated using (true);
-
-revoke all on public.agent_tokens from anon, authenticated;
+-- Deny browser roles until workspace ownership policies are installed by migration 0002.
+-- Keeping the initial migration closed prevents partial deployments from exposing private data.
+revoke all on public.agents, public.agent_tokens, public.tasks, public.agent_events from anon, authenticated;
 
 alter publication supabase_realtime add table public.agents;
 alter publication supabase_realtime add table public.tasks;

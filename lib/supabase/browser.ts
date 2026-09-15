@@ -1,8 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import { getPublicEnvironment } from "@/lib/supabase/env";
+
+let client: ReturnType<typeof createBrowserClient> | null = null;
 
 export function getBrowserClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key);
+  const environment = getPublicEnvironment();
+  if (!environment) return null;
+  client ??= createBrowserClient(environment.url, environment.publishableKey);
+  return client;
 }

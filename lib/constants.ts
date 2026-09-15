@@ -1,0 +1,7 @@
+export const API_VERSION = "2026-09-15";
+export const HEARTBEAT_STALE_AFTER_MS = 90_000;
+export const HEARTBEAT_OFFLINE_AFTER_MS = 300_000;
+export const DEFAULT_LEASE_SECONDS = 60;
+export const MAX_LEASE_SECONDS = 300;
+export const MAX_EVENT_MESSAGE_LENGTH = 8_000;
+export const MAX_LOG_PAGE_SIZE = 100;

@@ -2,15 +2,11 @@
 set -euo pipefail
 
 HQ_URL="${HQ_URL:-http://localhost:3000}"
-ADMIN_SECRET="${AGENT_ADMIN_SECRET:?Set AGENT_ADMIN_SECRET}"
+AGENT_TOKEN="${AGENT_HQ_TOKEN:?Register the agent in the authenticated dashboard and set AGENT_HQ_TOKEN}"
+EVENT_ID="${EVENT_ID:?Set a unique retry-stable EVENT_ID}"
 
-curl -sS "$HQ_URL/api/agents/register" \
+curl -sS "$HQ_URL/api/v1/events" \
   -X POST \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ADMIN_SECRET" \
-  -d '{
-    "slug": "spanish-assistant",
-    "name": "Spanish Assistant",
-    "description": "Spanish assistant for school",
-    "capabilities": ["homework","grammar","translation","study"]
-  }'
+  -H "Authorization: Bearer $AGENT_TOKEN" \
+  -d "{\"eventId\":\"$EVENT_ID\",\"type\":\"heartbeat\",\"message\":\"Runtime is online\"}"

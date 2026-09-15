@@ -1,0 +1,10 @@
+services:
+  agent-worker:
+    build: .
+    restart: unless-stopped
+    environment:
+      AGENT_HQ_URL: ${AGENT_HQ_URL}
+      AGENT_HQ_TOKEN: ${AGENT_HQ_TOKEN}
+      AGENT_HANDLER_URL: ${AGENT_HANDLER_URL}
+      WORKER_NAME: ${WORKER_NAME:-primary-worker}
+      POLL_INTERVAL_MS: 5000
