@@ -48,7 +48,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <LiveRefresh workspaceId={workspace.id} />
+          <LiveRefresh workspaceId={workspace.id} surface="sidebar" />
           <div className="account-row">
             <span className="avatar">{user.email?.slice(0, 1).toUpperCase() ?? "U"}</span>
             <span className="account-copy">
@@ -63,7 +63,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Link className="brand" href="/dashboard">
           <Boxes size={20} /> Agent HQ
         </Link>
-        <LiveRefresh workspaceId={workspace.id} />
+        <LiveRefresh workspaceId={workspace.id} surface="mobile" />
       </div>
       <main className="dashboard-main">{children}</main>
     </div>
