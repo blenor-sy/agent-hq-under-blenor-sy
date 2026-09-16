@@ -409,7 +409,8 @@ textarea::placeholder {
   color: var(--green);
   border-color: #285c3d;
 }
-.connection.reconnecting {
+.connection.delayed,
+.connection.connecting {
   color: var(--yellow);
 }
 .account-row {
