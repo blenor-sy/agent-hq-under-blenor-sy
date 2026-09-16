@@ -12,7 +12,9 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(
     search.get("error") === "confirmation_failed"
       ? "The sign-in link is invalid or expired."
-      : null,
+      : search.get("error") === "session_expired"
+        ? "Your previous session expired. Sign in again to reconnect securely."
+        : null,
   );
 
   async function submit(event: FormEvent<HTMLFormElement>) {
