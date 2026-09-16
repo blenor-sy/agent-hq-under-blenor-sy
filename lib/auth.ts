@@ -2,14 +2,15 @@ import { ApiError, bearerToken } from "@/lib/api";
 import { sha256 } from "@/lib/security";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { getServerClient } from "@/lib/supabase/server";
+import { identityFromClaims } from "@/lib/supabase/session";
 
 export async function requireUser() {
   const supabase = await getServerClient();
   if (!supabase) throw new ApiError(503, "not_configured", "Agent HQ is not configured.");
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user)
-    throw new ApiError(401, "authentication_required", "Sign in is required.");
-  return { supabase, user: data.user };
+  const { data, error } = await supabase.auth.getClaims();
+  const user = identityFromClaims(data?.claims);
+  if (error || !user) throw new ApiError(401, "authentication_required", "Sign in is required.");
+  return { supabase, user };
 }
 
 export async function requireWorkspaceRole(workspaceId: string, roles?: string[]) {
