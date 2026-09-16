@@ -18,7 +18,13 @@ const tables = [
 const RETRY_DELAY_MS = 5_000;
 const FALLBACK_REFRESH_MS = 30_000;
 
-export function LiveRefresh({ workspaceId }: { workspaceId: string }) {
+export function LiveRefresh({
+  workspaceId,
+  surface,
+}: {
+  workspaceId: string;
+  surface: "sidebar" | "mobile";
+}) {
   const router = useRouter();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [state, setState] = useState<"connecting" | "live" | "delayed">("connecting");
@@ -38,7 +44,9 @@ export function LiveRefresh({ workspaceId }: { workspaceId: string }) {
     const connect = () => {
       if (stopped || channel) return;
       setState("connecting");
-      let nextChannel = supabase.channel(`agent-hq:${workspaceId}`);
+      // Both responsive navigation surfaces remain mounted in the DOM. Their
+      // topics must be unique because Supabase rejects duplicate subscriptions.
+      let nextChannel = supabase.channel(`agent-hq:${workspaceId}:${surface}`);
       tables.forEach((table) => {
         nextChannel = nextChannel.on(
           "postgres_changes",
@@ -83,7 +91,7 @@ export function LiveRefresh({ workspaceId }: { workspaceId: string }) {
       window.removeEventListener("focus", refresh);
       if (channel) void supabase.removeChannel(channel);
     };
-  }, [router, workspaceId]);
+  }, [router, surface, workspaceId]);
 
   return (
     <span
