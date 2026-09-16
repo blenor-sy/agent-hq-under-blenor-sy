@@ -1,11 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getBrowserClient } from "@/lib/supabase/browser";
 
 export default function LoginPage() {
-  const router = useRouter();
   const search = useSearchParams();
   const [mode, setMode] = useState<"signin" | "signup" | "magic">("signin");
   const [loading, setLoading] = useState(false);
@@ -58,8 +57,10 @@ export default function LoginPage() {
       return;
     }
     const next = search.get("next");
-    router.replace(next?.startsWith("/dashboard") ? next : "/dashboard");
-    router.refresh();
+    // A full navigation starts the authenticated dashboard with a fresh browser
+    // client and Realtime socket. Keeping the pre-login client alive can leave
+    // its socket on the anonymous access token until the next page reload.
+    window.location.assign(next?.startsWith("/dashboard") ? next : "/dashboard");
   }
 
   return (
