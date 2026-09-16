@@ -15,6 +15,7 @@ export async function proxy(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return NextResponse.next();
+  const hadAuthCookie = request.cookies.getAll().some(({ name }) => isSupabaseAuthCookie(name));
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, key, {
@@ -40,7 +41,7 @@ export async function proxy(request: NextRequest) {
     login.pathname = "/login";
     login.search = "";
     login.searchParams.set("next", request.nextUrl.pathname);
-    login.searchParams.set("error", "session_expired");
+    if (hadAuthCookie) login.searchParams.set("error", "session_expired");
     return clearStaleAuthCookies(request, NextResponse.redirect(login));
   }
   if (request.nextUrl.pathname === "/login") {
